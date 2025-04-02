@@ -1,136 +1,170 @@
 ---
-title: Genesis Vault Risk Framework
+title: Genesis Vaults Risk Framework
+sidebarTitle: Risk Framework
+icon: "network-wired"
+iconType: "duotone"
 ---
 
-**Genesis Vaults** are the first generation of lending Vaults on Loopscale, curated and managed by the Loopscale core team. These Vaults are designed to test and refine Loopscale’s fixed-rate lending infrastructure, and are governed by a robust risk management framework developed specifically for early-phase growth and protocol reliability.
+The **Genesis Vaults** on Loopscale are the inaugural managed lending Vaults, designed and curated by the Loopscale core team.
 
-This document outlines how Loopscale approaches vault curation, collateral selection, rate management, and liquidity safety for Genesis Vaults across the Beta, Genesis, and Public rollout phases.
-
----
-
-## Vault Rollout Strategy
-
-Loopscale’s Genesis Vaults will be deployed in three distinct phases, each designed to progressively increase capital capacity, validate system performance, and onboard a broader user base.
+This framework outlines the principles, parameters, and systems in place to ensure that Genesis Vaults deliver yield with a high degree of transparency, security, and operational resilience.
 
 ## Collateral Management
 
 ### Inclusion Criteria
 
-Collateral for Genesis Vaults is restricted to high-quality Solana-native assets that meet strict safety thresholds:
+Genesis Vaults only accept high-quality, Solana-native collateral assets that meet strict standards for liquidity, price discovery, and smart contract safety.
 
-- **Tokens must have:**
+To be eligible, tokens must meet all of the following:
 
-  - Pyth Oracle support
-  - Listings on Binance, Coinbase, or ByBit
-  - Over $1M in _non-token-incentivized_ DEX liquidity
+- **Oracle coverage** via Pyth
+- **Major CEX listings**, such as Binance, Coinbase, or ByBit
+- **Sufficient on-chain liquidity**, with at least $1M in non-incentivized DEX volume
+- **Smart contract audits**, with LSTs, LPs, and other wrapped assets requiring reviews by at least two Tier-One Solana security firms
 
-- **Wrapped or staked assets:**
-  - Must inherit eligible underlying assets
-  - Require smart contract audits from at least **two Tier-One Solana audit firms**
+Collateral is assessed for not only technical safety but also economic resilience, including team risk, protocol maturity, and market liquidity.
 
-Token inclusion is based on liquidity, team risk, smart contract reliability, and redemption logic.
+> A curated collateral list is maintained weekly and available upon request.
 
-> _A weekly maintained list of eligible collateral is available on request._
+### LTV Assignment
 
----
+Loan-to-Value (LTV) ratios are calculated based on a risk assessment factoring in:
 
-### LTV Selection
+- **On-chain liquidity depth**
+- **Historical and implied volatility**
+- **Oracle latency and failure modes**
 
-Loan-to-Value (LTV) ratios are determined based on:
+Collateral types are treated individually:
 
-- **Liquidity** – Can the asset be sold quickly and at scale?
-- **Volatility** – Likelihood of rapid price changes
-- **Oracle Quality** – Frequency and accuracy of pricing updates
+- **Standard tokens** are analyzed for DEX slippage and liquidation capacity
+- **LSTs and LRTs** are evaluated based on deviation from redemption value
+- **LP tokens** inherit the risk profile of the most volatile or illiquid token in the pair, plus smart contract risk
+- **Paired assets** (e.g., SOL/mSOL or USDC/USDT) may receive up to 95% LTV if both assets meet core security thresholds
 
-#### Collateral Categories:
+Assets that fail to meet minimum standards (such as unaudited LPs or tokens with insufficient liquidity) are explicitly excluded.
 
-- **Vanilla Tokens** – Risk from low DEX liquidity
-- **LSTs / LRTs** – Risk from price deviation to redemption value
-- **LP Tokens** – Smart contract and pool composition risks
-- **Paired Assets** – If principal and collateral are aligned, LTV can reach up to 95%
+## Rate and Utilization Controls
 
-_Assets that fail these checks (e.g., unaudited, low-liquidity tokens) are excluded._
+Genesis Vault use a dynamic, manually-updated rate model to balance competitive yield generation with healthy liquidity reserves.
 
----
+### Utilization-Based Yield Curve
 
-## Rate Management
+Interest rates respond to the level of utilization within the Vault:
 
-Genesis Vaults follow a **utilization-based interest rate model** designed to balance competitiveness and liquidity health.
+<div className="hide-table-head" />
 
-### Base Curve
+|                    |                                                                        |
+| ------------------ | ---------------------------------------------------------------------- |
+| 0–25% utilization  | 50% of the lowest available borrow rate on Solana                      |
+| 25–50% utilization | Matches the prevailing floating rate                                   |
+| Above 50%          | Rates step up toward the midpoint between market borrow and lend rates |
+| SOL-based loans    | Peg to Solana base inflation rate beyond 50%                           |
 
-- **\<25% Utilization:** 50% of lowest borrow rate on Solana
-- **25–50%:** Mirrors lowest floating rate
-- **>50%:** Midpoint between market borrow and lend rates
-- **SOL Vaults:** Pegged to Solana inflation after 50%
+This system helps preserve a generous liquidity buffer while maintaining fair and transparent pricing for borrowers.
 
----
+### Collateral Diversification
 
-### Collateral Weighting
+To avoid overreliance on any single collateral type, there is a soft cap enforced on a collateral asset's share of active loans. This cap is enforced via rate pricing mechanics. Once a collateral exceeds 10% of all active loans, interest rates increase to offset the added risk.
 
-To avoid overexposure, each collateral type has a cap on active loans. Above 10%, interest rates rise:
-
-| Asset Group  | Max Target Share | Rate Increase Per % Above Cap |
-| ------------ | ---------------- | ----------------------------- |
-| USDC / USDT  | 50%              | +2.5%                         |
-| SOL + LSTs   | 33%              | +2.5%                         |
-| JLP          | 33%              | +2.5%                         |
-| Other Assets | 10%              | +2.5%                         |
-
----
+| Collateral Group | Max Target Share | Rate Adjustment Above Cap |
+| ---------------- | ---------------- | ------------------------- |
+| USDC / USDT      | 50%              | +2.5% per %               |
+| SOL + LSTs       | 33%              | +2.5% per %               |
+| JLP              | 33%              | +2.5% per %               |
+| Other assets     | 10%              | +2.5% per %               |
 
 ### Duration Premiums
 
-Longer durations will have:
+Genesis Vaults initially support only short-term loans. When longer durations are enabled, they will carry additional interest premiums to offset reduced liquidity flexibility:
 
-- **+10% of base rate per week**
-- **Caps on term exposure** (see Liquidity Management)
+- **+10% of the base rate per week of duration**
+- **Maximum exposure limits per term** (see [Term Caps](#term-caps))
 
----
+### Idle Capital
 
-## Liquidity Management
+To enhance returns on unused capital, idle Vault funds may be temporarily deployed to other low-risk Solana protocols (e.g., MarginFi). These allocations are actively monitored and can be halted if risk parameters tighten.
 
-Loopscale prioritizes real-time liquidity with automated guardrails.
+## Liquidity and Withdrawal Safeguards
 
-### Duration Caps
+Loopscale employs multiple mechanisms to ensure vault liquidity is continuously available for depositor withdrawals and borrower repayments.
 
-| Term     | Max % of Total Vault Debt |
-| -------- | ------------------------- |
-| 1 day    | 100%                      |
-| 1 week   | 50%                       |
-| 1 month  | 20%                       |
-| 3 months | 10%                       |
+### Term Caps
+
+Loan maturities are restricted to avoid concentration in long-dated risk:
+
+| Loan Term | Max % of Vault Debt |
+| --------- | ------------------- |
+| 1 day     | 100%                |
+| 1 week    | 50%                 |
+| 1 month   | 20%                 |
+| 3 months  | 10%                 |
 
 ### Liquidity Thresholds
 
-- **5% Idle Buffer:** New originations pause below this
-- **1% Emergency Threshold:** Loans are offloaded or paused
-- **Withdrawal Queues:** Activated if liquidity isn’t restorable
+- **5% Liquidity Buffer**: Lending is automatically paused when idle capital drops below 5% of total deposits.
 
-### Idle Liquidity Strategy
+- **1% Emergency Threshold**: If idle capital falls below 1%, Vaults begin actively offloading loans to restore liquidity. Capital may be rebalanced through cross-strategy orderbook sales.
 
-Idle funds may be temporarily deployed to MarginFi for passive yield—removed if risk grows.
+- **Withdrawal Queue Protocol**: When no additional liquidity can be sourced, a withdrawal queue is initiated. Lending originations pause until buffers are replenished.
 
----
+### Bad Debt Handling
 
-## Vault Fees
+Each Vault is isolated in terms of credit risk. If a loan defaults:
 
-- **$0 Fees** until the Vault exceeds $25M TVL
-- **10% performance fee** on interest above that
-- If post-fee returns are noncompetitive, fees may be waived
+- Liquidator receives full collateral value at oracle spot price
+- The difference between loan principal and recovered value is deducted from the Vault's NAV
+- Losses are absorbed proportionally by depositors in that Vault
+- **Withdrawals are paused** during resolution to prevent imbalance
 
----
+This structure ensures no contagion between Vaults and maintains transparency over realized losses.
 
-## Liquidation Framework
+## Fee Structure
 
-Loopscale uses a **redundant three-tier liquidation engine** for maximum reliability.
+Genesis Vaults do not charge any fees until they surpass a $25M deposit threshold. Beyond that:
 
-### Tiers
+- **Performance fee:** 10% of interest earned
+- **Fee flexibility:** Fees are waived if Vault returns fall below competitive benchmarks
 
-1. **Cloud Liquidator** – Websocket-triggered flash loan liquidation
-2. **Polling Agent** – 5-minute interval checks from a reserve wallet
-3. **Manual Intervention** – On-call team intervention if others fail
+## Operations and Infrastructure
 
-### Monitoring
+### Liquidations
 
-- Debt-to
+Loopscale maintains a redundant liquidation system to ensure reliable, timely execution and protect against bad debt.
+
+#### Three-Tiered Liquidation System
+
+1. **Primary Service**
+
+   - Cloud-based flash loan liquidator triggered by oracle updates
+   - Fully automated using Kamino, MarginFi, Solend, and major DEX routes
+
+2. **Secondary Poller**
+
+   - Backup service polling every 5 minutes
+   - Uses a pre-funded manager wallet with controlled execution
+
+3. **Tertiary Manual Service**
+   - Team-managed liquidation wallet with critical paging
+   - Manually executes liquidation if automated systems fail
+
+### Risk Monitoring & Alerts
+
+Loopscale continuously monitors collateral risk, liquidation performance, and infrastructure liveness.
+
+- **Real-time dashboards:** Collateral exposure, oracle performance, withdrawal trends, and rollover timing
+- **Alerts:** Slack, SMS, and PagerDuty notifications for:
+  - Oracle staleness
+  - Withdrawal spikes
+  - Failed liquidations
+  - Solana chain congestion or liveness issues
+
+### Operational Security
+
+Loopscale operates all smart contracts and backend services under strict access control.
+
+- **3/5 multisig governance** for contract upgrades (via Squads)
+- **Granular IAM roles and 2FA** on backend services
+- **Immutable logic** on liquidation and refinance flows
+- **Dedicated disaster response internal SOP** and 24/7 on-call rotation
+
+Loopscale cannot directly access or transfer user funds through backend systems.

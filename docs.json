@@ -29,11 +29,14 @@
   "navigation": {
     "versions": [
       {
-        "version": "Curator Documentation",
+        "version": "Genesis Supply Program",
         "groups": [
           {
             "group": "Loopscale Vaults",
-            "pages": ["docs/using-loopscale/loopscale-vaults/vault-curation"]
+            "pages": [
+              "docs/using-loopscale/loopscale-vaults/vault-curation",
+              "docs/using-loopscale/loopscale-vaults/risk-framework"
+            ]
           }
         ]
       },
@@ -106,6 +109,10 @@
   "navbar": {
     "links": [
       {
+        "label": "Support",
+        "href": "https://discord.com/channels/895116209958297631/1341918308211097630"
+      },
+      {
         "label": "Blog",
         "href": "https://blog.loopscale.com"
       }
@@ -119,8 +126,9 @@
   "footer": {
     "socials": {
       "x": "https://x.com/LoopscaleLabs",
-      "github": "https://github.com/LoopscaleLabs",
-      "linkedin": "https://linkedin.com/company/LoopscaleLabs"
+      "discord": "https://discord.gg/loopscale",
+      "linkedin": "https://linkedin.com/company/LoopscaleLabs",
+      "website": "https://loopscale.com"
     }
   }
 }
