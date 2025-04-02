@@ -1,0 +1,136 @@
+---
+title: Genesis Vault Risk Framework
+---
+
+**Genesis Vaults** are the first generation of lending Vaults on Loopscale, curated and managed by the Loopscale core team. These Vaults are designed to test and refine Loopscale’s fixed-rate lending infrastructure, and are governed by a robust risk management framework developed specifically for early-phase growth and protocol reliability.
+
+This document outlines how Loopscale approaches vault curation, collateral selection, rate management, and liquidity safety for Genesis Vaults across the Beta, Genesis, and Public rollout phases.
+
+---
+
+## Vault Rollout Strategy
+
+Loopscale’s Genesis Vaults will be deployed in three distinct phases, each designed to progressively increase capital capacity, validate system performance, and onboard a broader user base.
+
+## Collateral Management
+
+### Inclusion Criteria
+
+Collateral for Genesis Vaults is restricted to high-quality Solana-native assets that meet strict safety thresholds:
+
+- **Tokens must have:**
+
+  - Pyth Oracle support
+  - Listings on Binance, Coinbase, or ByBit
+  - Over $1M in _non-token-incentivized_ DEX liquidity
+
+- **Wrapped or staked assets:**
+  - Must inherit eligible underlying assets
+  - Require smart contract audits from at least **two Tier-One Solana audit firms**
+
+Token inclusion is based on liquidity, team risk, smart contract reliability, and redemption logic.
+
+> _A weekly maintained list of eligible collateral is available on request._
+
+---
+
+### LTV Selection
+
+Loan-to-Value (LTV) ratios are determined based on:
+
+- **Liquidity** – Can the asset be sold quickly and at scale?
+- **Volatility** – Likelihood of rapid price changes
+- **Oracle Quality** – Frequency and accuracy of pricing updates
+
+#### Collateral Categories:
+
+- **Vanilla Tokens** – Risk from low DEX liquidity
+- **LSTs / LRTs** – Risk from price deviation to redemption value
+- **LP Tokens** – Smart contract and pool composition risks
+- **Paired Assets** – If principal and collateral are aligned, LTV can reach up to 95%
+
+_Assets that fail these checks (e.g., unaudited, low-liquidity tokens) are excluded._
+
+---
+
+## Rate Management
+
+Genesis Vaults follow a **utilization-based interest rate model** designed to balance competitiveness and liquidity health.
+
+### Base Curve
+
+- **\<25% Utilization:** 50% of lowest borrow rate on Solana
+- **25–50%:** Mirrors lowest floating rate
+- **>50%:** Midpoint between market borrow and lend rates
+- **SOL Vaults:** Pegged to Solana inflation after 50%
+
+---
+
+### Collateral Weighting
+
+To avoid overexposure, each collateral type has a cap on active loans. Above 10%, interest rates rise:
+
+| Asset Group  | Max Target Share | Rate Increase Per % Above Cap |
+| ------------ | ---------------- | ----------------------------- |
+| USDC / USDT  | 50%              | +2.5%                         |
+| SOL + LSTs   | 33%              | +2.5%                         |
+| JLP          | 33%              | +2.5%                         |
+| Other Assets | 10%              | +2.5%                         |
+
+---
+
+### Duration Premiums
+
+Longer durations will have:
+
+- **+10% of base rate per week**
+- **Caps on term exposure** (see Liquidity Management)
+
+---
+
+## Liquidity Management
+
+Loopscale prioritizes real-time liquidity with automated guardrails.
+
+### Duration Caps
+
+| Term     | Max % of Total Vault Debt |
+| -------- | ------------------------- |
+| 1 day    | 100%                      |
+| 1 week   | 50%                       |
+| 1 month  | 20%                       |
+| 3 months | 10%                       |
+
+### Liquidity Thresholds
+
+- **5% Idle Buffer:** New originations pause below this
+- **1% Emergency Threshold:** Loans are offloaded or paused
+- **Withdrawal Queues:** Activated if liquidity isn’t restorable
+
+### Idle Liquidity Strategy
+
+Idle funds may be temporarily deployed to MarginFi for passive yield—removed if risk grows.
+
+---
+
+## Vault Fees
+
+- **$0 Fees** until the Vault exceeds $25M TVL
+- **10% performance fee** on interest above that
+- If post-fee returns are noncompetitive, fees may be waived
+
+---
+
+## Liquidation Framework
+
+Loopscale uses a **redundant three-tier liquidation engine** for maximum reliability.
+
+### Tiers
+
+1. **Cloud Liquidator** – Websocket-triggered flash loan liquidation
+2. **Polling Agent** – 5-minute interval checks from a reserve wallet
+3. **Manual Intervention** – On-call team intervention if others fail
+
+### Monitoring
+
+- Debt-to

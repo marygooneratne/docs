@@ -1,102 +1,126 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Loopscale",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#276ED6",
+    "light": "#F8F9FB",
+    "dark": "#151619"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/static/assets/favicon.svg",
+  "icons": {
+    "library": "fontawesome"
+  },
+  "fonts": {
+    "heading": {
+      "family": "ABC Diatype Unlicensed Trial",
+      "source": "https://loopscale-site.s3.us-east-1.amazonaws.com/fonts/ABCDiatype-Bold-Trial.woff",
+      "weight": 600,
+      "format": "woff"
+    },
+    "body": {
+      "family": "ABC Diatype Unlicensed Trial",
+      "source": "https://loopscale-site.s3.us-east-1.amazonaws.com/fonts/ABCDiatype-Regular-Trial.woff",
+      "weight": 400,
+      "format": "woff"
+    }
+  },
+  "appearance": { "default": "light", "strict": true },
   "navigation": {
-    "tabs": [
+    "versions": [
       {
-        "tab": "Guides",
+        "version": "Curator Documentation",
         "groups": [
           {
-            "group": "Get Started",
-            "pages": [
-              "introduction",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Essentials",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
-            ]
+            "group": "Loopscale Vaults",
+            "pages": ["docs/using-loopscale/loopscale-vaults/vault-curation"]
           }
         ]
       },
       {
-        "tab": "API Reference",
+        "version": "Public Documentation",
         "groups": [
           {
-            "group": "API Documentation",
+            "group": "Introduction",
             "pages": [
-              "api-reference/introduction"
+              "docs/introduction/overview",
+              "docs/introduction/why-loopscale"
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Using Loopscale",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              {
+                "group": "Loopscale Vaults",
+                "pages": [
+                  "docs/using-loopscale/loopscale-vaults/loopscale-vaults",
+                  "docs/using-loopscale/loopscale-vaults/vault-curation"
+                ]
+              },
+              "docs/using-loopscale/yield-loops",
+              {
+                "group": "Borrowing",
+                "pages": [
+                  "docs/using-loopscale/borrowing/borrowing-assets",
+                  "docs/using-loopscale/borrowing/managing-loans",
+                  "docs/using-loopscale/borrowing/using-lp-collateral"
+                ]
+              },
+              {
+                "group": "Advanced Lending",
+                "pages": [
+                  "docs/using-loopscale/advanced-lending/lending-assets",
+                  "docs/using-loopscale/advanced-lending/managing-positions"
+                ]
+              },
+              "docs/using-loopscale/points"
+            ]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "docs/concepts/loans",
+              "docs/concepts/credit-order-book",
+              "docs/concepts/loops"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "docs/resources/risks-and-security",
+              "docs/resources/asset-parameters",
+              "docs/resources/faq",
+              "docs/resources/audits",
+              "docs/resources/brand-kit"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/static/assets/logo/light.svg",
+    "dark": "/static/assets/logo/dark.svg",
+    "href": "https://loopscale.com"
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Blog",
+        "href": "https://blog.loopscale.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Launch App",
+      "href": "https://app.loopscale.com"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/LoopscaleLabs",
+      "github": "https://github.com/LoopscaleLabs",
+      "linkedin": "https://linkedin.com/company/LoopscaleLabs"
     }
   }
 }

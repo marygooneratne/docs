@@ -1,0 +1,79 @@
+---
+title: Vault Curation
+---
+
+Vaults on Loopscale are governed by **Vault Curators**, who manage how user deposits are deployed across lending markets. A curator defines the parameters that shape the Vault’s yield strategy, risk exposure, and borrower profile.
+
+Each Vault is also designed with built-in transparency and risk protections, including public parameter visibility, time-locked changes, and limits on curator control. These safeguards help ensure depositors are never exposed to sudden or opaque shifts in strategy.
+
+There are a number of key levers available to Curators that uniquely modify the behavior of a Vault.
+
+## Collateral Configuration
+
+Curators determine which tokens can be used as **collateral** for borrowing from the Vault. For each accepted collateral type, curators set:
+
+<div className="hide-table-head" />
+
+|                     |                                                                           |
+| ------------------- | ------------------------------------------------------------------------- |
+| Loan-to-Value (LTV) | Defines how much can be borrowed against a given collateral               |
+| Liquidation LTV     | The point at which a borrower's position becomes eligible for liquidation |
+
+The choice of collateral,
+and the limits set around it, are central to a Vault's risk management strategy.
+Conservative Vaults might only accept blue-chip assets with low LTVs, while risk-tolerant
+Vaults might include more volatile tokens at higher yields. Changing which tokens
+are accepted as collateral or adjusting LTV thresholds triggers a **24-hour cooldown**,
+giving depositors time to react to potential shifts in Vault risk.
+
+## Rates and Yield
+
+Curators control how the Vault supplies liquidity to lending markets by **setting a interest rate the borrower pays to borrow against each accepted collateral type for each duration**. Fixed-rate durations available on Loopscale are 1 day, 1 week, 1 month, and 3 months. Curators have the ability to limit supplied liquidity to a subset of loan durations.
+
+This allows curators to tune the Vault to different goals: short-term yield generation, long-duration lending, or targeted exposure to specific borrower types.
+
+### Fees
+
+Curators may further define the Vault's yield curve with fees charged to borrowers or suppliers and earned by the curator.
+
+<div className="hide-table-head" />
+
+|                  |                                                                                           |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| Origination Fees | One-time fees defined as a percentage of borrowed principal charged to borrowers up front |
+| Interest Fees    | Fees defined as a percentage of interest earned charged to suppliers as interest accrues. |
+
+### Rewards
+
+Curators may also deposit tokens (including non-principal tokens) to be automatically distributed proportionally to suppliers according to a curator-defined schedule. These additional rewards are reflected in the Vault APY displayed to suppliers.
+
+Together, these settings define the Vault's supply yield, the range of offers it places across fixed-rate markets, and how attractive those offers are to borrowers.
+
+## Risk Management
+
+Each Vault can also be configured with system-level risk controls. These parameters govern Vault behavior in edge cases or high-demand scenarios.
+
+Curators can define:
+
+<div className="hide-table-head" />
+
+|                                                                                      |                                                                                                                                       |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| <div style={{ display: "inline-block", minWidth: "120px" }}> Liquidity Buffer </div> | A portion of Vault funds held idle to facilitate instant withdrawals. Lending is paused if idle liquidity drops below this threshold. |
+| Max Loan Size                                                                        | The largest single loan the Vault can issue, limiting exposure to individual borrowers.                                               |
+| Liquidation Penalty                                                                  | Additional cost to borrowers if their position is liquidated.                                                                         |
+
+These settings help ensure that Vaults are not overexposed, that liquidity remains available for depositors, and that the Vault operates profitably in adverse market conditions.
+
+### Strategy Changes & Cooldowns
+
+To promote trust and transparency, any changes to high-risk parameters—such as collateral types or risk thresholds—are subject to a **24-hour time lock**.
+
+This applies to:
+
+- Adding or removing collateral
+- Modifying LTV or liquidation thresholds
+
+Other settings, such as APYs and origination fees, can be updated immediately.
+
+This system ensures depositors are never blindsided by sudden changes to Vault risk or strategy, and helps maintain fairness across all participants.
